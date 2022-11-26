@@ -12,8 +12,8 @@ import CallToAction from "./ui/CallToAction";
 import { Link } from "react-router-dom";
 const useStyles = makeStyles(theme => ({
     animation: {
-        maxWidth: "45em",
-        minWidth: "21em",
+        maxWidth: "43em",
+        minWidth: "19em",
         marginTop: "2em",
         marginLeft: "10%",
         [theme.breakpoints.down("sm")]: {

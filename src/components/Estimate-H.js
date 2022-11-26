@@ -1,3 +1,20 @@
+import React, { useState } from "react";
+import axios from "axios";
+import Lottie from "react-lottie";
+import { cloneDeep } from "lodash";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+
+import Grid from "@material-ui/core/Grid";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
+import TextField from "@material-ui/core/TextField";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+import Hidden from "@material-ui/core/Hidden";
+import Snackbar from "@material-ui/core/Snackbar";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import check from "../assets/check.svg";
 import send from "../assets/send.svg";
@@ -15,7 +32,7 @@ import persons from "../assets/persons.svg";
 import info from "../assets/info.svg";
 import bell from "../assets/bell.svg";
 import people from "../assets/people.svg";
-import users from "../assets/users.svg";
+import usersIcon from "../assets/users.svg";
 import iPhone from "../assets/iphone.svg";
 import gps from "../assets/gps.svg";
 import customized from "../assets/customized.svg";
@@ -24,12 +41,6 @@ import android from "../assets/android.svg";
 import globe from "../assets/globe.svg";
 import biometrics from "../assets/biometrics.svg";
 import estimateAnimation from "../animations/estimateAnimation/data.json";
-import { Button, CircularProgress, Dialog, DialogContent, Grid, Hidden, IconButton, makeStyles, Snackbar, TextField, Typography, useMediaQuery, useTheme } from "@material-ui/core";
-import Lottie from "react-lottie";
-import React from "react";
-import { useState } from "react";
-import { cloneDeep } from "lodash";
-import axios from "axios";
 
 const useStyles = makeStyles(theme => ({
     icon: {
@@ -42,8 +53,8 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: theme.palette.common.orange,
         height: 50,
         width: 225,
-        fontSize: "1.25rem",
         marginTop: "5em",
+        fontSize: "1.25rem",
         "&:hover": {
             backgroundColor: theme.palette.secondary.light
         }
@@ -60,7 +71,8 @@ const useStyles = makeStyles(theme => ({
         fontSize: "2rem",
         color: theme.palette.common.orange
     }
-}))
+}));
+
 const defaultQuestions = [
     {
         id: 1,
@@ -97,8 +109,42 @@ const defaultQuestions = [
         ]
     }
 ];
+
 const softwareQuestions = [
-    { ...defaultQuestions[0], active: false },
+    {
+        id: 1,
+        title: "Which service are you interested in?",
+        active: false,
+        options: [
+            {
+                id: 1,
+                title: "Custom Software Development",
+                subtitle: null,
+                icon: software,
+                iconAlt: "three floating screens",
+                selected: false,
+                cost: 0
+            },
+            {
+                id: 2,
+                title: "iOS/Android App Development",
+                subtitle: null,
+                icon: mobile,
+                iconAlt: "outlines of phones and tablets",
+                selected: false,
+                cost: 0
+            },
+            {
+                id: 3,
+                title: "Website Development",
+                subtitle: null,
+                icon: website,
+                iconAlt: "computer outline",
+                selected: false,
+                cost: 0
+            }
+        ]
+    },
     {
         id: 2,
         title: "Which platforms do you need supported?",
@@ -111,7 +157,7 @@ const softwareQuestions = [
                 icon: website,
                 iconAlt: "computer outline",
                 selected: false,
-                cost: 100
+                cost: 1000
             },
             {
                 id: 2,
@@ -120,7 +166,7 @@ const softwareQuestions = [
                 icon: iPhone,
                 iconAlt: "outline of iphone",
                 selected: false,
-                cost: 100
+                cost: 1000
             },
             {
                 id: 3,
@@ -129,7 +175,7 @@ const softwareQuestions = [
                 icon: android,
                 iconAlt: "outlines of android phone",
                 selected: false,
-                cost: 100
+                cost: 1000
             }
         ],
         active: true
@@ -146,7 +192,7 @@ const softwareQuestions = [
                 icon: camera,
                 iconAlt: "camera outline",
                 selected: false,
-                cost: 25
+                cost: 250
             },
             {
                 id: 2,
@@ -155,7 +201,7 @@ const softwareQuestions = [
                 icon: gps,
                 iconAlt: "gps pin",
                 selected: false,
-                cost: 25
+                cost: 250
             },
             {
                 id: 3,
@@ -164,7 +210,7 @@ const softwareQuestions = [
                 icon: upload,
                 iconAlt: "outline of cloud with arrow pointing up",
                 selected: false,
-                cost: 25
+                cost: 250
             }
         ],
         active: false
@@ -178,10 +224,10 @@ const softwareQuestions = [
                 id: 1,
                 title: "Users/Authentication",
                 subtitle: null,
-                icon: users,
+                icon: usersIcon,
                 iconAlt: "outline of a person with a plus sign",
                 selected: false,
-                cost: 25
+                cost: 250
             },
             {
                 id: 2,
@@ -190,7 +236,7 @@ const softwareQuestions = [
                 icon: biometrics,
                 iconAlt: "fingerprint",
                 selected: false,
-                cost: 25
+                cost: 250
             },
             {
                 id: 3,
@@ -199,7 +245,7 @@ const softwareQuestions = [
                 icon: bell,
                 iconAlt: "outline of a bell",
                 selected: false,
-                cost: 25
+                cost: 250
             }
         ],
         active: false
@@ -216,7 +262,7 @@ const softwareQuestions = [
                 icon: info,
                 iconAlt: "'i' inside a circle",
                 selected: false,
-                cost: 25
+                cost: 250
             },
             {
                 id: 2,
@@ -225,7 +271,7 @@ const softwareQuestions = [
                 icon: customized,
                 iconAlt: "two toggle switches",
                 selected: false,
-                cost: 50
+                cost: 500
             },
             {
                 id: 3,
@@ -234,7 +280,7 @@ const softwareQuestions = [
                 icon: data,
                 iconAlt: "outline of line graph",
                 selected: false,
-                cost: 100
+                cost: 1000
             }
         ],
         active: false
@@ -260,7 +306,7 @@ const softwareQuestions = [
                 icon: persons,
                 iconAlt: "outline of two people",
                 selected: false,
-                cost: 1.25
+                cost: 1.125
             },
             {
                 id: 3,
@@ -269,14 +315,48 @@ const softwareQuestions = [
                 icon: people,
                 iconAlt: "outline of three people",
                 selected: false,
-                cost: 1.5
+                cost: 1.25
             }
         ],
         active: false
     }
 ];
+
 const websiteQuestions = [
-    { ...defaultQuestions[0], active: false },
+    {
+        id: 1,
+        title: "Which service are you interested in?",
+        active: false,
+        options: [
+            {
+                id: 1,
+                title: "Custom Software Development",
+                subtitle: null,
+                icon: software,
+                iconAlt: "three floating screens",
+                selected: false,
+                cost: 0
+            },
+            {
+                id: 2,
+                title: "iOS/Android App Development",
+                subtitle: null,
+                icon: mobile,
+                iconAlt: "outlines of phones and tablets",
+                selected: false,
+                cost: 0
+            },
+            {
+                id: 3,
+                title: "Website Development",
+                subtitle: null,
+                icon: website,
+                iconAlt: "computer outline",
+                selected: false,
+                cost: 0
+            }
+        ]
+    },
     {
         id: 2,
         title: "Which type of website are you wanting?",
@@ -289,7 +369,7 @@ const websiteQuestions = [
                 icon: info,
                 iconAlt: "person outline",
                 selected: false,
-                cost: 100
+                cost: 1000
             },
             {
                 id: 2,
@@ -298,7 +378,7 @@ const websiteQuestions = [
                 icon: customized,
                 iconAlt: "outline of two people",
                 selected: false,
-                cost: 200
+                cost: 2000
             },
             {
                 id: 3,
@@ -307,13 +387,14 @@ const websiteQuestions = [
                 icon: globe,
                 iconAlt: "outline of three people",
                 selected: false,
-                cost: 250
+                cost: 2500
             }
         ],
         active: true
     }
 ];
-export default function Estimate({ setValue, setSelectedIndex }) {
+
+export default function Estimate() {
     const classes = useStyles();
     const theme = useTheme();
     const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
@@ -347,14 +428,16 @@ export default function Estimate({ setValue, setSelectedIndex }) {
 
     const defaultOptions = {
         loop: true,
-        autoPlay: true,
+        autoplay: false,
         animationData: estimateAnimation,
         rendererSettings: {
-            preserveAspectRatio: 'xMidYMid slice'
+            preserveAspectRatio: "xMidYMid slice"
         }
-    }
-    const nextQuestions = () => {
+    };
+
+    const nextQuestion = () => {
         const newQuestions = cloneDeep(questions);
+
         const currentlyActive = newQuestions.filter(question => question.active);
         const activeIndex = currentlyActive[0].id - 1;
         const nextIndex = activeIndex + 1;
@@ -363,7 +446,8 @@ export default function Estimate({ setValue, setSelectedIndex }) {
         newQuestions[nextIndex] = { ...newQuestions[nextIndex], active: true };
 
         setQuestions(newQuestions);
-    }
+    };
+
     const previousQuestion = () => {
         const newQuestions = cloneDeep(questions);
 
@@ -376,6 +460,7 @@ export default function Estimate({ setValue, setSelectedIndex }) {
 
         setQuestions(newQuestions);
     };
+
     const backButtonDisabled = () => {
         const currentlyActive = questions.filter(question => question.active);
         const activeId = currentlyActive[0].id;
@@ -386,6 +471,7 @@ export default function Estimate({ setValue, setSelectedIndex }) {
             return false;
         }
     };
+
     const forwardButtonDisabled = () => {
         const currentlyActive = questions.filter(question => question.active);
         const activeId = currentlyActive[0].id;
@@ -396,6 +482,7 @@ export default function Estimate({ setValue, setSelectedIndex }) {
             return false;
         }
     };
+
     const estimateDisabled = () => {
         let disabled = true;
 
@@ -752,66 +839,158 @@ export default function Estimate({ setValue, setSelectedIndex }) {
         </Grid>
     );
 
-
-
     return (
         <Grid container direction="row">
-            <Grid item container direction="column" lg>
-                <Grid item style={{ marginTop: "2em", marginLeft: "5em" }}>
-                    <Typography variant="h2">
+            <Grid
+                item
+                container
+                direction="column"
+                lg
+                alignItems={matchesMD ? "center" : undefined}
+            >
+                <Grid
+                    item
+                    style={{ marginTop: "2em", marginLeft: matchesMD ? 0 : "5em" }}
+                >
+                    <Typography variant="h2" align={matchesMD ? "center" : undefined}>
                         Estimate
                     </Typography>
                 </Grid>
-                <Grid item style={{ marginRight: "10em", maxWidth: "50em", marginTop: "7.5em" }}>
-                    <Lottie options={defaultOptions} height="100%" width="100%" isStopped />
+                <Grid
+                    item
+                    style={{
+                        marginRight: matchesMD ? 0 : "10em",
+                        maxWidth: "50em",
+                        marginTop: "7.5em"
+                    }}
+                >
+                    <Lottie
+                        options={defaultOptions}
+                        isStopped
+                        height="100%"
+                        width="100%"
+                    />
                 </Grid>
             </Grid>
-            <Grid item container direction="column" lg alignItems="center" style={{ marginRight: "2em", marginBottom: "25em" }}>
-                {questions.filter(question => question.active).map((question, index) => (
-                    <React.Fragment key={index}>
-                        <Grid item>
-                            <Typography variant="h2" align="center" style={{ fontWeight: 500, marginTop: "5em", fontSize: "2.25rem", lineHeight: "1.25em" }} >
-                                {question.title}
-                            </Typography>
-                            <Typography variant="body1" align="center" style={{ marginBottom: "2.5em" }} gutterBottom>
-                                {question.subtitle}
-                            </Typography>
-                        </Grid>
-                        <Grid item container>
-                            {question.options.map(option => (
-                                <Grid item container direction="column" md component={Button} onClick={() => handleSelect(option.id)}
-                                    style={{ display: "grid", textTransform: "none", borderRadius: 0, backgroundColor: option.selected ? theme.palette.common.orange : null }}>
-                                    <Grid item style={{ maxWidth: "14em" }}>
-                                        <Typography variant="h6" align="center" style={{ marginBottom: "1em" }}>
-                                            {option.title}
-                                        </Typography>
-                                        <Typography variant="caption" align="center">
-                                            {option.subtitle}
-                                        </Typography>
+            <Grid
+                item
+                container
+                direction="column"
+                alignItems="center"
+                lg
+                style={{ marginRight: matchesMD ? 0 : "2em", marginBottom: "25em" }}
+            >
+                {questions
+                    .filter(question => question.active)
+                    .map((question, index) => (
+                        <React.Fragment key={index}>
+                            <Grid item>
+                                <Typography
+                                    align="center"
+                                    variant="h2"
+                                    style={{
+                                        fontWeight: 500,
+                                        fontSize: "2.25rem",
+                                        marginTop: "5em",
+                                        lineHeight: 1.25,
+                                        marginLeft: matchesSM ? "1em" : 0,
+                                        marginRight: matchesSM ? "1em" : 0
+                                    }}
+                                >
+                                    {question.title}
+                                </Typography>
+                                <Typography
+                                    variant="body1"
+                                    align="center"
+                                    style={{ marginBottom: "2.5em" }}
+                                    gutterBottom
+                                >
+                                    {question.subtitle}
+                                </Typography>
+                            </Grid>
+                            <Grid item container>
+                                {question.options.map(option => (
+                                    <Grid
+                                        item
+                                        container
+                                        component={Button}
+                                        onClick={() => handleSelect(option.id)}
+                                        style={{
+                                            display: "block",
+                                            textTransform: "none",
+                                            borderRadius: 0,
+                                            marginBottom: matchesSM ? "1.5em" : 0,
+                                            backgroundColor: option.selected
+                                                ? theme.palette.common.orange
+                                                : undefined
+                                        }}
+                                        direction="column"
+                                        alignItems="center"
+                                        md
+                                    >
+                                        <Grid item style={{ maxWidth: "14em" }}>
+                                            <Typography
+                                                align="center"
+                                                variant="h6"
+                                                style={{
+                                                    lineHeight: 1,
+                                                    marginBottom: "1em"
+                                                }}
+                                            >
+                                                {option.title}
+                                            </Typography>
+                                            <Typography align="center" variant="caption">
+                                                {option.subtitle}
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            <img
+                                                src={option.icon}
+                                                alt={option.iconAlt}
+                                                className={classes.icon}
+                                            />
+                                        </Grid>
                                     </Grid>
-                                    <Grid item>
-                                        <img src={option.icon} alt={option.iconAlt} className={classes.icon} />
-                                    </Grid>
-                                </Grid>
-                            ))}
-                        </Grid>
-                    </React.Fragment>
-                ))}
-                <Grid item container justify="space-between" style={{ width: "18em", marginTop: "3em" }}>
+                                ))}
+                            </Grid>
+                        </React.Fragment>
+                    ))}
+                <Grid
+                    item
+                    container
+                    justify="space-between"
+                    style={{ width: "18em", marginTop: "3em" }}
+                >
                     <Grid item>
-                        <IconButton disabled={backButtonDisabled()} onClick={previousQuestion}>
-                            <img src={backButtonDisabled() ? backArrowDisabled : backArrow} alt="previous question" />
+                        <IconButton
+                            disabled={backButtonDisabled()}
+                            onClick={previousQuestion}
+                        >
+                            <img
+                                src={backButtonDisabled() ? backArrowDisabled : backArrow}
+                                alt="Previous question"
+                            />
                         </IconButton>
                     </Grid>
                     <Grid item>
-                        <IconButton disabled={forwardButtonDisabled()} onClick={nextQuestions}>
-                            <img src={forwardButtonDisabled() ? forwardArrowDisabled : forwardArrow} alt="next question" />
+                        <IconButton
+                            disabled={forwardButtonDisabled()}
+                            onClick={nextQuestion}
+                        >
+                            <img
+                                src={
+                                    forwardButtonDisabled() ? forwardArrowDisabled : forwardArrow
+                                }
+                                alt="Next question"
+                            />
                         </IconButton>
                     </Grid>
                 </Grid>
                 <Grid item>
-                    <Button variant="contained" className={classes.estimateButton}
+                    <Button
+                        variant="contained"
                         disabled={estimateDisabled()}
+                        className={classes.estimateButton}
                         onClick={() => {
                             setDialogOpen(true);
                             getTotal();
@@ -819,7 +998,8 @@ export default function Estimate({ setValue, setSelectedIndex }) {
                             getFeatures();
                             getCustomFeatures();
                             getCategory();
-                        }}>
+                        }}
+                    >
                         Get Estimate
                     </Button>
                 </Grid>
@@ -989,5 +1169,5 @@ export default function Estimate({ setValue, setSelectedIndex }) {
                 onClose={() => setAlert(false)}
             />
         </Grid>
-    )
+    );
 }
